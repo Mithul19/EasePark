@@ -1,0 +1,8 @@
+# Smart Parking System - Python Dependencies
+numpy>=1.24.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+joblib>=1.3.0
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+azure-storage-blob>=12.22.0

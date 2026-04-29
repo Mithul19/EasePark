@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ease-park-api
+  labels:
+    app: ease-park-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ease-park-api
+  template:
+    metadata:
+      labels:
+        app: ease-park-api
+    spec:
+      containers:
+      - name: ease-park-api
+        image: acrregistryname.azurecr.io/ease-park-api:latest
+        imagePullPolicy: Always
+        env:
+        - name: AZURE_STORAGE_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: ease-park-backend-secret
+              key: AZURE_STORAGE_CONNECTION_STRING
+        - name: AZURE_STORAGE_CONTAINER
+          valueFrom:
+            configMapKeyRef:
+              name: ease-park-backend-config
+              key: AZURE_STORAGE_CONTAINER
+              optional: true
+        ports:
+        - containerPort: 8000
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"

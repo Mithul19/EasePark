@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ease-park-ui
+  labels:
+    app: ease-park-ui
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ease-park-ui
+  template:
+    metadata:
+      labels:
+        app: ease-park-ui
+    spec:
+      containers:
+      - name: ease-park-ui
+        image: acrregistryname.azurecr.io/ease-park-ui:latest
+        imagePullPolicy: Always
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: AZURE_OPENAI_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: ease-park-config
+              key: AZURE_OPENAI_ENDPOINT
+              optional: true
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "250m"
+            memory: "256Mi"
